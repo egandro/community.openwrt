@@ -1,9 +1,6 @@
-# collection_template
-You can build a new repository for an Ansible Collection using this template by following [Creating a repository from a template](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template). This README.md contains recommended headings for your collection README.md, with comments describing what each section should contain. Once you have created your collection repository, delete this paragraph and the title above it from your README.md.
-
-# Foo Collection for Ansible
+# Community OpenWRT Collection
 <!-- Add CI and code coverage badges here. Samples included below. -->
-[![CI](https://github.com/ansible-collections/REPONAMEHERE/workflows/CI/badge.svg?event=push)](https://github.com/ansible-collections/REPONAMEHERE/actions) [![Codecov](https://img.shields.io/codecov/c/github/ansible-collections/REPONAMEHERE)](https://codecov.io/gh/ansible-collections/REPONAMEHERE)
+[![CI](https://github.com/ansible-collections/community.openwrt/workflows/CI/badge.svg?event=push)](https://github.com/ansible-collections/community.openwrt/actions) [![Codecov](https://img.shields.io/codecov/c/github/ansible-collections/community.openwrt)](https://codecov.io/gh/ansible-collections/community.openwrt)
 
 <!-- Describe the collection and why a user would want to use it. What does the collection do? -->
 
@@ -11,11 +8,11 @@ You can build a new repository for an Ansible Collection using this template by 
 
 <!-- Put your collection's mission statement in here. Example follows. -->
 
-At the `your collection name`, our mission is to produce and maintain simple, flexible,
-and powerful open-source software tailored to `your collection purpose`.
+At the `community.openwrt`, our mission is to produce and maintain simple, flexible,
+and powerful open-source software tailored to manage and support OpenWRT devices.
 
 We welcome members from all skill levels to participate actively in our open, inclusive, and vibrant community.
-Whether you are an expert or just beginning your journey with Ansible and `your collection name`,
+Whether you are an expert or just beginning your journey with Ansible and `community.openwrt`,
 you are encouraged to contribute, share insights, and collaborate with fellow enthusiasts!
 
 ## Code of Conduct
@@ -81,56 +78,58 @@ Every voice is important. If you have something on your mind, create an issue or
 ## Tested with Ansible
 
 <!-- List the versions of Ansible the collection has been tested with. Must match what is in galaxy.yml. -->
+TBD
 
 ## External requirements
 
 <!-- List any external resources the collection depends on, for example minimum versions of an OS, libraries, or utilities. Do not list other Ansible collections here. -->
-
-### Supported connections
-<!-- Optional. If your collection supports only specific connection types (such as HTTPAPI, netconf, or others), list them here. -->
+TBD
 
 ## Included content
 
 <!-- Galaxy now usually displays full module and plugin docs within the UI. If you don't use Galaxy for your collection, you may need to either describe your plugins etc here, or point to an external docsite to cover that information. -->
+TBD
 
 ## Using this collection
 
-<!--Include some quick examples that cover the most common use cases for your collection content. It can include the following examples of installation and upgrade (change NAMESPACE.COLLECTION_NAME correspondingly):-->
+<!--Include some quick examples that cover the most common use cases for your collection content. It can include the following examples of installation and upgrade (change community.openwrt correspondingly):-->
+TBD
 
 ### Installing the Collection from Ansible Galaxy
 
 Before using this collection, you need to install it with the Ansible Galaxy command-line tool:
 ```bash
-ansible-galaxy collection install NAMESPACE.COLLECTION_NAME
+ansible-galaxy collection install community.openwrt
 ```
 
 You can also include it in a `requirements.yml` file and install it with `ansible-galaxy collection install -r requirements.yml`, using the format:
 ```yaml
 ---
 collections:
-  - name: NAMESPACE.COLLECTION_NAME
+  - name: community.openwrt
 ```
 
 Note that if you install the collection from Ansible Galaxy, it will not be upgraded automatically when you upgrade the `ansible` package. To upgrade the collection to the latest available version, run the following command:
 ```bash
-ansible-galaxy collection install NAMESPACE.COLLECTION_NAME --upgrade
+ansible-galaxy collection install community.openwrt --upgrade
 ```
 
 You can also install a specific version of the collection, for example, if you need to downgrade when something is broken in the latest version (please report an issue in this repository). Use the following syntax to install version `0.1.0`:
 
 ```bash
-ansible-galaxy collection install NAMESPACE.COLLECTION_NAME:==0.1.0
+ansible-galaxy collection install community.openwrt:==0.1.0
 ```
 
 See [using Ansible collections](https://docs.ansible.com/ansible/devel/user_guide/collections_using.html) for more details.
 
 ## Release notes
 
-See the [changelog](https://github.com/ansible-collections/REPONAMEHERE/tree/main/CHANGELOG.rst).
+See the [changelog](https://github.com/ansible-collections/community.openwrt/tree/main/CHANGELOG.rst).
 
 ## Roadmap
 
 <!-- Optional. Include the roadmap for this collection, and the proposed release/versioning strategy so users can anticipate the upgrade/update cycle. -->
+There is no roadmap for this collection at this moment. One should be created and published if community feedback shows an appetite for it.
 
 ## More information
 
