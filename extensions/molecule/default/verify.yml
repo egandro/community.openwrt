@@ -5,7 +5,7 @@
   roles:
     - role: community.openwrt.init
       vars:
-        openwrt_install_recommended_packages: false
+        openwrt_install_recommended_packages: true
   tasks:
     - name: Retrieve /etc/os-release
       community.openwrt.slurp:
@@ -31,6 +31,10 @@
       register: holy_canole
       changed_when: false
 
+    - name: Show the canole
+      ansible.builtin.debug:
+        var: holy_canole
+
     - name: Assert Canole
       ansible.builtin.assert:
         that:
@@ -55,7 +59,8 @@
 
     - name: Verify recommended packages were installed
       community.openwrt.command:
-        cmd: sh -c '[ -x /bin/base64 ] && [ -x /usr/bin/sha1sum ]'
+        cmd: 'sleep 3; [ -x /bin/base64 ] && [ -x /usr/bin/sha1sum ]'
+        uses_shell: true
       changed_when: false
 
     - name: Create test file on controller
