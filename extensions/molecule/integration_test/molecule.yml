@@ -1,0 +1,33 @@
+---
+driver:
+  name: docker
+platforms:
+  - name: openwrt_x86_64-24.10.4
+    image: openwrt/rootfs:x86_64-24.10.4
+    command: sh -c "mkdir -p /var/lock; sleep infinity"
+    pre_build_image: true
+  - name: openwrt_x86_64-23.05.6
+    image: openwrt/rootfs:x86_64-23.05.6
+    command: sh -c "mkdir -p /var/lock; sleep infinity"
+    pre_build_image: true
+  - name: openwrt_x86_64-22.03.7
+    image: openwrt/rootfs:x86_64-22.03.7
+    command: sh -c "mkdir -p /var/lock; sleep infinity"
+    pre_build_image: true
+  - name: openwrt_x86_64-21.02.7
+    image: openwrt/rootfs:x86_64-21.02.7
+    command: sh -c "mkdir -p /var/lock; sleep infinity"
+    pre_build_image: true
+scenario:
+  test_sequence:
+    - dependency
+    - create
+    - converge
+    - destroy
+
+# Ensure generated ansible.cfg allows legacy/broken conditionals used by some drivers
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      allow_broken_conditionals: True
