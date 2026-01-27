@@ -139,7 +139,7 @@ Please check the included content on the [Ansible Galaxy page for this collectio
       community.openwrt.setup:
 
     - name: Install a package
-      community.openwrt.opkg:
+      community.openwrt.apk:
         name: luci
         state: present
 
