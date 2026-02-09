@@ -12,9 +12,9 @@ Community OpenWrt How-To Guide
 Welcome to the Community OpenWrt How-To Guide! This is a collection of recipes that will help you
 using the ``community.openwrt`` role in real world scenarios.
 
-OpenWrt has a very small footprint there is no python available it is a design rule of ``community.openwrt``
-to no force you to install it. Based on this limitation a lot of ansible pattern and default roles
-are not available or will fail. However there are ``community.openwrt`` specific roles.
+Most OpenWrt devices have a very small footprint and there is no space available to install Python. Based on this constraint, virtually all of the standard Ansible modules are not available. 
+
+It is a design rule of ``community.openwrt`` not to require Python, rather providing modules based on shell scripts (``/bin/sh``) instead.
 
 Also by the nature of OpenWrt and its CLI-based ``uci`` tool, you need to be very familiar how
 this ecosystem works. Even the creation of a Wifi passwort or a simple forwarding rule can
