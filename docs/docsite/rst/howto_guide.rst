@@ -12,7 +12,7 @@ Community OpenWrt How-To Guide
 Welcome to the Community OpenWrt How-To Guide! This is a collection of recipes that will help you
 using the ``community.openwrt`` role in real world scenarios.
 
-Most OpenWrt devices have a very small footprint and there is no space available to install Python. Based on this constraint, virtually all of the standard Ansible modules are not available. 
+Most OpenWrt devices have a very small footprint and there is no space available to install Python. Based on this constraint, virtually all of the standard Ansible modules are not available.
 
 It is a design rule of ``community.openwrt`` not to require Python, rather providing modules based on shell scripts (``/bin/sh``) instead.
 
@@ -25,8 +25,27 @@ Below is a list of topics we intend to write How-To documents about. The ones th
 Initial Setup
 ^^^^^^^^^^^^^
 
-- Real Hardware
-- VM as a router for Proxmox or similar hypervisors
+Real Hardware
+"""""""""""""
+
+ - Consult the official hardware guide at <https://openwrt.org/toh/start>.
+ - Ensure the device is flashed with a compatible OpenWrt firmware image.
+ - Default configurations define separate WAN and LAN interfaces; wireless is disabled by default.
+ - LAN interfaces typically have an active DHCP server enabled.
+ - The LuCI web interface is accessible at `http://192.168.1.1`.
+
+**Note**: Single-interface hardware (e.g., Raspberry Pi) typically defaults the Ethernet port to the LAN zone.
+Establishing WAN connectivity requires configuring the onboard WiFi or a USB network adapter.
+Be aware that USB adapters often require drivers missing from the base image; bootstrapping initial connectivity
+for such hardware is an advanced topic and beyond the scope of this guide.
+
+Verify connectivity via ping, LuCI, or SSH at ``192.168.1.1`` (default: ``root`` / no password).
+Consult the OpenWrt documentation for further device-specific instructions.
+
+VM as a router on a hypervisors (Proxmox as exa)
+"""""""""""""""""""""""""""""""""""""""""""""""""
+
+- TBD
 
 
 SSH Installation
