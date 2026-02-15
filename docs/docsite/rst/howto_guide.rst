@@ -42,11 +42,134 @@ for such hardware is an advanced topic and beyond the scope of this guide.
 Verify connectivity via ping, LuCI, or SSH at ``192.168.1.1`` (default: ``root`` / no password).
 Consult the OpenWrt documentation for further device-specific instructions.
 
-VM as a router on a hypervisors (Proxmox as exa)
-"""""""""""""""""""""""""""""""""""""""""""""""""
+VM as a router on a hypervisors (Proxmox showcase)
+""""""""""""""""""""""""""""""""""""""""""""""""""
 
-- TBD
+You need the `community.proxmox <https://docs.ansible.com/projects/ansible/latest/collections/community/proxmox/index.html>` role.
 
+**Download Image**
+
+Unfortunately ``community.proxmox.proxmox_template`` can only download iso, lxc templates or ova. So we use ssh to proxmox.
+
+..  code-block:: yaml+jinja
+
+    ---
+    - hosts: proxmox
+      gather_facts: false
+      become: true
+      vars:
+        #openwrt_version: "24.10.5"
+        openwrt_version: "25.12.0-rc4"
+        # this is the default "local" storage iso path
+        iso_storage_path: "/var/lib/vz/template/iso"
+        openwrt_image_url: "https://downloads.openwrt.org/releases/{{ openwrt_version }}/targets/x86/64/openwrt-{{ openwrt_version }}-x86-64-generic-ext4-combined.img.gz"
+        openwrt_filename: "openwrt-{{ openwrt_version }}-x86-64-generic-ext4-combined.img.gz"
+      tasks:
+        - name: Install OpenWRT image
+          shell: |
+            cd {{ iso_storage_path }}
+            wget -q "{{ openwrt_image_url }}"
+            gunzip -f "{{ openwrt_filename }}"
+          args:
+            creates: "{{ iso_storage_path }}/{{ openwrt_filename | replace('.gz', '') }}"
+
+**Create the VM**
+
+..  code-block:: yaml+jinja
+
+    ---
+    - hosts: localhost
+      gather_facts: false
+      vars:
+        proxmox_api_user: root@pam
+        proxmox_api_token_id: my-token-id
+        proxmox_api_token_secret: xxxxxx-xxxxx-xxxxxx-xxxx
+        proxmox_host: "pve.example.com:8006"
+        proxmox_vm_storage: local
+
+        proxmox_vm_id: 8563
+        proxmox_vm_name: dummy-openwrt
+        proxmox_vm_node: pve
+
+        iso_storage_path: "/var/lib/vz/template/iso"
+
+        openwrt_version: "25.12.0-rc4"
+        openwrt_image: "openwrt-{{ openwrt_version }}-x86-64-generic-ext4-combined.img"
+      tasks:
+        - name: Remove VM if it exists
+          community.proxmox.proxmox_kvm:
+            api_user: "{{ proxmox_api_user }}"
+            api_token_id: "{{ proxmox_api_token_id }}"
+            api_token_secret: "{{ proxmox_api_token_secret }}"
+            api_host: "{{ proxmox_host }}"
+            vmid: "{{ proxmox_vm_id }}"
+            state: absent
+            force: true
+            timeout: 300
+
+        - name: Create OpenWrt VM
+          community.proxmox.proxmox_kvm:
+            api_user: "{{ proxmox_api_user }}"
+            api_token_id: "{{ proxmox_api_token_id }}"
+            api_token_secret: "{{ proxmox_api_token_secret }}"
+            api_host: "{{ proxmox_host }}"
+            vmid: "{{ proxmox_vm_id }}"
+            name: "{{ proxmox_vm_name }}"
+            node: "{{ proxmox_vm_node }}"
+            storage: "{{ proxmox_vm_storage }}"
+            state: present
+            scsihw: virtio-scsi-single
+            net:
+              # careful here
+              # LAN
+              net0: 'virtio,bridge=vmbrXXX'
+              # WAN
+              net1: 'virtio,bridge=vmbrYYY'
+            cores: 2
+            memory: 512
+
+        # this uses SSH - if you know how to use `community.proxmox.proxmox_disk` create a ticket via github
+
+        - name: Check VM configuration for scsi0
+          ansible.builtin.command: "qm config {{ proxmox_vm_id }}"
+          register: vm_config
+          delegate_to: "{{ proxmox_vm_node }}"
+          become: true
+          changed_when: false
+
+        - name: Import OpenWrt image and set boot order
+          ansible.builtin.shell: |
+            qm set {{ proxmox_vm_id }} --scsi0 {{ proxmox_vm_storage }}:0,import-from="{{ iso_storage_path }}/{{ openwrt_image }}",discard=on,cache=writeback,format=qcow2
+            qm set {{ proxmox_vm_id }} --boot order=scsi0
+          delegate_to: "{{ proxmox_vm_node }}"
+          become: true
+          when:
+            - "'scsi0:' not in vm_config.stdout"
+          register: import_result
+
+**Further VM Bootstrapping Automation**
+
+- Challenge: ``192.168.1.1`` might be not routed. The `WAN`device has a firewall for http(s) and ssh.
+- Limitation: ``community.openwrt`` requires SSH and cannot bootstrap the device.
+- Solution: On Proxmox, use ``serial0`` instead of the VGA display and automate with ``ansible.builtin.expect``.
+
+..  code-block:: yaml+jinja
+
+    - name: Make Terminal serial console
+      ansible.builtin.shell: |
+        qm shutdown {{ proxmox_vm_openwrt_vmid }} || true
+        qm set {{ proxmox_vm_openwrt_vmid }} --serial0 socket --vga serial0
+        # close any terminal on the Proxmox UI
+        qm start {{ proxmox_vm_openwrt_vmid }}
+
+    - name: Set SSH
+      ansible.builtin.expect:
+      delegate_to: "{{ proxmox_vm_node }}"
+      become: true
+        command: "qm terminal {{ proxmox_vm_id }}"
+        responses:
+            "xxx":
+                - "yyy"
 
 SSH Installation
 ^^^^^^^^^^^^^^^^
