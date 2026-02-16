@@ -171,11 +171,95 @@ Unfortunately ``community.proxmox.proxmox_template`` can only download iso, lxc 
             "xxx":
                 - "yyy"
 
+You also need to install ``qemu-ga`` (QEMU Guest Agent) in OpenWrt to simplify Proxmox interaction with the VM.
+This can also be done in Ansible.
+
+..  code-block:: bash
+
+    # legacy OpenWrt 24.x
+    # opkg update
+    # opkg install qemu-ga
+
+    # OpenWrt >= 25.x
+    apt update
+    apt add -q qemu-ga
+
+    service qemu-ga enable
+    # you have to reboot
+
+
 SSH Installation
 ^^^^^^^^^^^^^^^^
 
-- Bootstrap
-- Initial SSH Key Installation
+Bootstrap
+"""""""""
+
+**Manual SSH installation**
+
+- Click here (or your use your own IP) ``<http://192.168.1.1>``.
+- If https redirects are enabled, you might get a certificate warning. Please ignore this.
+- Login was ``root`` / no password (check the documentation of your image for other default passwords).
+- OpenWrt might ask you to change the password.
+- Click on System/Administration/Router Password
+- Change your Router Password.
+- Click on System/Administration/SSH Access (if you don't see this - follow the instructions)
+- Enable ``Enable Instance``
+- Disable the ``Password authentication``
+- Disable ``Allow root logins with passwords``
+- Click on System/Administration/SSH-Keys
+- Add your SSH Key here
+
+If you have no SSH Access in the Admin menu, you might need to install dropbear
+
+- Your OpenWrt router needs internet access.
+- Click on System/Software/Update Lists. Confirm with Dismiss.
+- In the Filter box type in ``dropbear``
+- Press the ``Install...`` button.
+- Click System/Reboot/Perform Reboot
+- After reboot, perform the steps System/Administration/SSH Access mentioned before
+
+
+Troubleshooting
+
+- The ``dropbear`` service might not be enabled.
+- Click System/Startup
+- Check if ``dropbear`` is in the list. If it's ``Disabled`` click on the button to enable it.
+- Click on the ``Start`` / ``Restart`` button.
+- If SSH is still not available on ``192.168.1.1`` check the firewall rules.
+
+Reboot the system and ensure that you can login via ssh keys.
+
+**Ansible based SSH Key Installation**
+
+- TBD
+
+**Advanced SSH Key Installation**
+
+- You might have a board that only has a serial port terminal access.
+
+..  code-block:: bash
+
+    # set root password
+    passwd
+
+    # install dropbear
+
+    # legacy OpenWrt 24.x
+    # opkg update
+    # opkg install dropbear
+
+    # OpenWrt >= 25.x
+    apt update
+    apt add -q dropbear
+
+    service dropbear enable
+    service dropbear start
+
+    echo 'your ssh key content' > /etc/dropbear/authorized_keys
+
+    uci set dropbear.@dropbear[0].PasswordAuth='off'
+    uci set dropbear.@dropbear[0].RootPasswordAuth='off'
+    uci commit dropbear
 
 
 SSL Certificates
